@@ -184,6 +184,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
         <label class="fl">Password</label>
         <input class="in" id="inPw" type="password" placeholder="Password guru" onkeydown="if(event.key==='Enter')masukGuru()">
         <button class="btn" id="btnGuru" onclick="masukGuru()">Masuk</button>
+        <p style="text-align:center;margin-top:16px"><a href="#" onclick="lupa();return false" style="color:var(--teal);font-weight:600;font-size:14px">Lupa password?</a></p>
       </div>
       <div class="credit">Design by <b>Akhmad Fitra Harry, S.Pd</b></div>
     </div>
@@ -264,7 +265,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
 
 <script>
 /* ====== WAJIB DIISI: tempel URL Web App dari Google Apps Script (berakhiran /exec) ====== */
-const API_URL = 'https://script.google.com/macros/s/AKfycbyKISKFfKQdnfM3tZc-7G_k23bNmMbcVudGGIXOz5oe_LhK11KjpTnhMN3QAjOmcY8N/exec';
+const API_URL = 'PASTE_URL_WEB_APP_DI_SINI';
 /* ======================================================================================= */
 
 const $ = id => document.getElementById(id);
@@ -437,6 +438,14 @@ async function masukGuru() {
     $('vLogin').classList.add('hidden'); $('vAdmin').classList.remove('hidden');
   } catch (e) { err('eGuru', e.message || 'Gagal masuk.'); }
   b.disabled = false;
+}
+
+async function lupa() {
+  noerr('eGuru');
+  try {
+    const r = await api('lupa');
+    dialog('<p>' + esc(r.msg) + '</p>', [{ t: 'OK', c: 'background:var(--teal);color:#fff' }]);
+  } catch (e) { err('eGuru', 'Tidak dapat terhubung ke server.'); }
 }
 
 async function muatHasil() {
