@@ -267,6 +267,21 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
       <button class="tb" onclick="resetTk()">Reset token</button>
     </div>
     <div id="rMsg" style="margin-top:10px;font-size:14px;color:var(--muted)"></div>
+
+    <div class="card" style="margin-top:28px;border-color:#f0c4b8;background:#fff8f5">
+      <div class="eyebrow" style="color:var(--red)">Zona hapus data</div>
+      <p style="font-size:14px;line-height:1.6;color:#3b474b">Gunakan setelah semua ulangan selesai. <b>Unduh PDF atau Excel dulu</b>, karena data yang dihapus tidak dapat dikembalikan.</p>
+      <div class="rst">
+        <select class="in" id="inBersih">
+          <option value="hasil">Hapus semua nilai (sheet Hasil)</option>
+          <option value="token">Reset semua token (bisa dipakai lagi)</option>
+          <option value="soal">Kosongkan semua soal</option>
+          <option value="semua">Hapus SEMUA (nilai + reset token + kosongkan soal)</option>
+        </select>
+        <button class="tb" style="background:var(--red);border-color:var(--red);color:#fff" onclick="bersih()">Hapus</button>
+      </div>
+      <div id="bMsg" style="margin-top:10px;font-size:14px;color:var(--muted)"></div>
+    </div>
     <div class="credit">Soal, token, dan pengaturan diubah langsung di Google Spreadsheet.<br>Design by <b>Akhmad Fitra Harry, S.Pd</b></div>
   </div>
 </div>
@@ -505,6 +520,17 @@ async function resetTk() {
   const t = $('inReset').value.trim(); if (!t) return;
   const r = await api('reset', { pw: ADMINPW, token: t });
   $('rMsg').textContent = r.msg; muatHasil();
+}
+
+async function bersih() {
+  const sel = $('inBersih'), label = sel.options[sel.selectedIndex].text;
+  const k = prompt('PERINGATAN: ' + label + '\n\nData yang dihapus tidak bisa dikembalikan. Pastikan nilai sudah diunduh.\n\nKetik HAPUS lalu tekan OK untuk melanjutkan:');
+  if (k === null) return;
+  try {
+    const r = await api('bersih', { pw: ADMINPW, jenis: sel.value, konfirmasi: k });
+    $('bMsg').textContent = r.msg;
+    if (r.ok) muatHasil();
+  } catch (e) { $('bMsg').textContent = 'Gagal menghubungi server.'; }
 }
 
 /* ---------- Ekspor (mengikuti filter mata pelajaran & pencarian) ---------- */
