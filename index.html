@@ -175,7 +175,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
 
       <div id="fSiswa">
         <h2>Selamat datang</h2>
-        <p class="sub">Isi nama lengkap dan token dari guru untuk memulai.</p>
+        <p class="sub">Isi nama lengkap dan token mata pelajaran dari guru. Setiap mata pelajaran memiliki token yang berbeda.</p>
         <div id="eSiswa" class="alert hidden"></div>
         <label class="fl">Nama lengkap</label>
         <input class="in" id="inNama" placeholder="Contoh: Siti Nurhaliza" autocomplete="off">
@@ -251,6 +251,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
     </div>
     <div class="stats" id="aStats"></div>
     <div class="tools">
+      <select class="in" id="aMapel" onchange="tabel()"><option value="">Semua mata pelajaran</option></select>
       <input class="in" id="aCari" placeholder="Cari nama siswa..." oninput="tabel()">
       <button class="tb" onclick="muatHasil()">↻ Muat ulang</button>
       <button class="tb pdf" onclick="expPDF()">Unduh PDF</button>
@@ -258,7 +259,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
       <button class="tb" onclick="expCSV()">Unduh CSV</button>
     </div>
     <div class="tbl"><table>
-      <thead><tr><th>No</th><th>Nama</th><th>Token</th><th>Benar</th><th>Salah</th><th>Nilai</th><th>Pel. Tab</th><th>Waktu</th></tr></thead>
+      <thead><tr><th>No</th><th>Nama</th><th>Mapel</th><th>Token</th><th>Benar</th><th>Salah</th><th>Nilai</th><th>Pel. Tab</th><th>Waktu</th></tr></thead>
       <tbody id="aBody"></tbody>
     </table></div>
     <div class="rst">
@@ -281,7 +282,7 @@ const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rich = s => esc(s).replace(/\[img:(https?:\/\/[^\]\s]+)\]/g, (_, u) => '<img src="' + u.replace(/&amp;/g, '&') + '" alt="">');
 
-let CFG = {}, SOAL = [], JAWAB = {}, RAGU = {}, CUR = 0, TOKEN = '', NAMA = '';
+let MAPEL = '', CFG = {}, SOAL = [], JAWAB = {}, RAGU = {}, CUR = 0, TOKEN = '', NAMA = '';
 let END = 0, TIMER = null, PEL = 0, DONE = false, ADMINPW = '', HASIL = [];
 
 async function api(action, data = {}) {
@@ -339,7 +340,7 @@ async function masuk() {
   try {
     const r = await api('login', { nama, token });
     if (!r.ok) throw new Error(r.msg);
-    NAMA = r.nama; TOKEN = r.token;
+    NAMA = r.nama; TOKEN = r.token; MAPEL = r.mapel || '';
     const q = await api('soal', { token: TOKEN });
     if (!q.ok || !q.soal.length) throw new Error(q.msg || 'Soal belum tersedia.');
     SOAL = q.soal; mulai(r.sisa);
@@ -353,7 +354,8 @@ function mulai(sisa) {
     if (sv) { JAWAB = sv.j || {}; RAGU = sv.r || {}; CUR = Math.min(sv.c || 0, SOAL.length - 1); PEL = sv.p || 0; }
   } catch (e) {}
   $('vLogin').classList.add('hidden'); $('vExam').classList.remove('hidden');
-  $('xJudul').textContent = CFG.judul;
+  $('xJudul').textContent = (CFG.judul || 'Ujian') + ' - ' + MAPEL;
+  document.title = MAPEL + ' - ' + (CFG.judul || 'Ujian');
   $('xNama').textContent = NAMA + ' · ' + (CFG.kelas || '');
   END = Date.now() + sisa * 1000;
   TIMER = setInterval(tick, 500); tick(); render();
@@ -434,12 +436,11 @@ async function kirim() {
     const r = await api('submit', { token: TOKEN, jawaban: JAWAB, pelanggaran: PEL });
     if (!r.ok) throw new Error(r.msg);
     try { localStorage.removeItem('ujian_' + TOKEN); } catch (e) {}
-    $('modal').innerHTML = '<div class="ov"><div class="dlg res"><div class="lbl">UJIAN SELESAI</div>' +
-      '<div class="score">' + r.nilai + '</div><div class="lbl">NILAI AKHIR</div>' +
-      '<div class="chips"><div class="chip" style="background:#e3f4ec;color:#0f7a4a"><b>' + r.benar + '</b><small>Benar</small></div>' +
-      '<div class="chip" style="background:#fdecec;color:var(--red)"><b>' + r.salah + '</b><small>Salah</small></div>' +
-      '<div class="chip" style="background:#fbf1d8;color:#8a5a00"><b>' + r.pelanggaran + '</b><small>Pelanggaran tab</small></div></div>' +
-      '<p style="color:var(--muted);font-size:14px">Terima kasih, ' + esc(NAMA) + '.</p>' +
+    $('modal').innerHTML = '<div class="ov"><div class="dlg res">' +
+      '<div style="width:76px;height:76px;border-radius:50%;background:var(--teal-l);color:var(--teal);font-size:42px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">✓</div>' +
+      '<h3 class="serif" style="font-size:28px;margin-bottom:10px">Ujian selesai</h3>' +
+      '<p>Jawaban kamu sudah terkirim.<br>Terima kasih, ' + esc(NAMA) + '.</p>' +
+      '<p style="color:var(--muted);font-size:14px;margin-top:10px">' + esc(MAPEL) + '<br>Hasil akan diumumkan oleh guru.</p>' +
       '<div class="row"><button style="background:var(--teal);color:#fff" onclick="location.reload()">Selesai &amp; keluar</button></div></div></div>';
   } catch (e) {
     DONE = false; TIMER = setInterval(tick, 500);
@@ -472,26 +473,32 @@ async function lupa() {
 async function muatHasil() {
   const r = await api('hasil', { pw: ADMINPW });
   if (!r.ok) { alert(r.msg); return; }
-  HASIL = r.hasil; window._mengerjakan = r.mengerjakan; tabel();
+  HASIL = r.hasil; window._mengerjakan = r.mengerjakan; isiMapel(r.mapelList); tabel();
 }
 
-function ringkas() {
-  const n = HASIL.map(x => Number(x.nilai));
+function isiMapel(list) {
+  const sel = $('aMapel'); if (sel.options.length > 1) return;
+  (list || []).forEach(m => { const o = document.createElement('option'); o.value = m; o.textContent = m; sel.appendChild(o); });
+}
+function terfilter() {
+  const m = $('aMapel').value, q = $('aCari').value.trim().toLowerCase();
+  return HASIL.filter(x => (!m || x.mapel === m) && String(x.nama).toLowerCase().indexOf(q) > -1);
+}
+function ringkas(rows) {
+  const n = rows.map(x => Number(x.nilai));
   const avg = n.length ? n.reduce((a, b) => a + b, 0) / n.length : 0;
   return { jml: n.length, avg: Math.round(avg * 100) / 100, max: n.length ? Math.max(...n) : 0, min: n.length ? Math.min(...n) : 0 };
 }
 
 function tabel() {
-  const s = ringkas();
-  $('aSub').textContent = (CFG.judul || '') + ' · ' + (CFG.kelas || '');
+  const rows = terfilter(), s = ringkas(rows), m = $('aMapel').value;
+  $('aSub').textContent = (CFG.judul || '') + ' · ' + (CFG.kelas || '') + (m ? ' · ' + m : '');
   $('aStats').innerHTML = [['Selesai', s.jml], ['Mengerjakan', window._mengerjakan || 0], ['Rata-rata', s.avg], ['Tertinggi', s.max], ['Terendah', s.min]]
     .map(a => '<div class="stat"><small>' + a[0] + '</small><b>' + a[1] + '</b></div>').join('');
-  const q = $('aCari').value.trim().toLowerCase();
-  const rows = HASIL.filter(x => String(x.nama).toLowerCase().indexOf(q) > -1);
   $('aBody').innerHTML = rows.map((x, i) =>
-    '<tr><td>' + (i + 1) + '</td><td>' + esc(x.nama) + '</td><td>' + esc(x.token) + '</td><td>' + x.benar + '</td><td>' + x.salah +
+    '<tr><td>' + (i + 1) + '</td><td>' + esc(x.nama) + '</td><td>' + esc(x.mapel) + '</td><td>' + esc(x.token) + '</td><td>' + x.benar + '</td><td>' + x.salah +
     '</td><td class="nl">' + x.nilai + '</td><td>' + x.pel + '</td><td>' + esc(x.waktu) + '</td></tr>').join('') ||
-    '<tr><td colspan="8" style="text-align:center;color:var(--muted)">Belum ada data</td></tr>';
+    '<tr><td colspan="9" style="text-align:center;color:var(--muted)">Belum ada data</td></tr>';
 }
 
 async function resetTk() {
@@ -500,29 +507,33 @@ async function resetTk() {
   $('rMsg').textContent = r.msg; muatHasil();
 }
 
-/* ---------- Ekspor ---------- */
-function urut() { return HASIL.slice().sort((a, b) => String(a.nama).localeCompare(String(b.nama), 'id')); }
-function namaFile(ext) {
-  const t = (CFG.judul || 'Nilai').replace(/[^\w\-]+/g, '_');
-  return 'Nilai_' + t + '_' + new Date().toISOString().slice(0, 10) + '.' + ext;
+/* ---------- Ekspor (mengikuti filter mata pelajaran & pencarian) ---------- */
+function urut() {
+  return terfilter().sort((a, b) => String(a.mapel).localeCompare(String(b.mapel), 'id') || String(a.nama).localeCompare(String(b.nama), 'id'));
 }
-function dataBaris() { return urut().map((x, i) => [i + 1, x.nama, x.kelas || CFG.kelas || '', x.token, x.benar, x.salah, x.nilai, x.pel, x.waktu]); }
-const KOLOM = ['No', 'Nama', 'Kelas', 'Token', 'Benar', 'Salah', 'Nilai', 'Pel. Tab', 'Waktu'];
+function namaFile(ext) {
+  const m = ($('aMapel').value || 'Semua_Mapel').replace(/[^\w\-]+/g, '_');
+  const t = (CFG.judul || 'Nilai').replace(/[^\w\-]+/g, '_');
+  return 'Nilai_' + t + '_' + m + '_' + new Date().toISOString().slice(0, 10) + '.' + ext;
+}
+function dataBaris() { return urut().map((x, i) => [i + 1, x.nama, x.kelas || CFG.kelas || '', x.mapel, x.token, x.benar, x.salah, x.nilai, x.pel, x.waktu]); }
+const KOLOM = ['No', 'Nama', 'Kelas', 'Mata Pelajaran', 'Token', 'Benar', 'Salah', 'Nilai', 'Pel. Tab', 'Waktu'];
 
 function expPDF() {
-  if (!HASIL.length) return alert('Belum ada data nilai.');
+  const rows = terfilter();
+  if (!rows.length) return alert('Belum ada data nilai.');
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  const s = ringkas();
+  const s = ringkas(rows), m = $('aMapel').value;
   doc.setFont('helvetica', 'bold'); doc.setFontSize(16);
-  doc.text('REKAP NILAI ' + String(CFG.judul || '').toUpperCase(), 14, 16);
+  doc.text('REKAP NILAI ' + String(CFG.judul || '').toUpperCase() + (m ? ' - ' + m.toUpperCase() : ''), 14, 16);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(11);
   doc.text((CFG.sekolah || '') + ' | ' + (CFG.kelas || ''), 14, 23);
   doc.text('Jumlah siswa: ' + s.jml + '   Rata-rata: ' + s.avg + '   Tertinggi: ' + s.max + '   Terendah: ' + s.min, 14, 30);
   doc.autoTable({
     head: [KOLOM], body: dataBaris(), startY: 35, theme: 'grid',
-    headStyles: { fillColor: [15, 118, 110] }, styles: { fontSize: 10 },
-    columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 4: { halign: 'center' }, 5: { halign: 'center' }, 6: { halign: 'center', fontStyle: 'bold' }, 7: { halign: 'center' } },
+    headStyles: { fillColor: [15, 118, 110] }, styles: { fontSize: 9.5 },
+    columnStyles: { 0: { halign: 'center', cellWidth: 12 }, 5: { halign: 'center' }, 6: { halign: 'center' }, 7: { halign: 'center', fontStyle: 'bold' }, 8: { halign: 'center' } },
     didDrawPage: () => {
       doc.setFontSize(9); doc.setTextColor(120);
       doc.text('Design by Akhmad Fitra Harry, S.Pd', 14, doc.internal.pageSize.height - 8);
@@ -532,14 +543,14 @@ function expPDF() {
   doc.save(namaFile('pdf'));
 }
 function expXLSX() {
-  if (!HASIL.length) return alert('Belum ada data nilai.');
+  if (!terfilter().length) return alert('Belum ada data nilai.');
   const ws = XLSX.utils.aoa_to_sheet([KOLOM].concat(dataBaris()));
-  ws['!cols'] = [{ wch: 5 }, { wch: 28 }, { wch: 18 }, { wch: 10 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 9 }, { wch: 18 }];
+  ws['!cols'] = [{ wch: 5 }, { wch: 28 }, { wch: 18 }, { wch: 24 }, { wch: 10 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 9 }, { wch: 18 }];
   const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'Nilai');
   XLSX.writeFile(wb, namaFile('xlsx'));
 }
 function expCSV() {
-  if (!HASIL.length) return alert('Belum ada data nilai.');
+  if (!terfilter().length) return alert('Belum ada data nilai.');
   const csv = [KOLOM].concat(dataBaris()).map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
