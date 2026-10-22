@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ujian Online</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f766e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ujian">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -186,6 +193,8 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
         <button class="btn" id="btnGuru" onclick="masukGuru()">Masuk</button>
         <p style="text-align:center;margin-top:16px"><a href="#" onclick="lupa();return false" style="color:var(--teal);font-weight:600;font-size:14px">Lupa password?</a></p>
       </div>
+      <button class="btn hidden" id="btnInstall" onclick="pasang()" style="margin-top:14px;background:var(--ink)">⬇ Pasang aplikasi di HP</button>
+      <p class="hidden" id="iosHint" style="font-size:13px;color:var(--muted);text-align:center;margin-top:12px">Di iPhone: ketuk tombol Bagikan, lalu pilih "Tambah ke Layar Utama".</p>
       <div class="credit">Design by <b>Akhmad Fitra Harry, S.Pd</b></div>
     </div>
   </div>
@@ -265,7 +274,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
 
 <script>
 /* ====== WAJIB DIISI: tempel URL Web App dari Google Apps Script (berakhiran /exec) ====== */
-const API_URL = 'https://script.google.com/macros/s/AKfycbxZ5QYVHeCmgpEJ9PA9rY3E_gMvC9VyFyTd8c0CKp3nsuxFLi21h7kYkw_hT3U-AqV-YA/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycby6YPeXcHFReh4M8gVgj8IGag0HdbakAzFEfHhM3jiQbXitHypaIShGe2NRcGAPFoveXA/exec';
 /* ======================================================================================= */
 
 const $ = id => document.getElementById(id);
@@ -281,10 +290,22 @@ async function api(action, data = {}) {
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(Object.assign({ action }, data))
   });
-  return r.json();
+  const t = await r.text();
+  try { return JSON.parse(t); }
+  catch (e) { throw new Error('Server tidak membalas dengan benar. Pastikan deployment Apps Script diatur "Siapa saja" (Anyone) dan URL berakhiran /exec.'); }
 }
 function err(id, m) { const e = $(id); e.textContent = m; e.classList.remove('hidden'); }
 function noerr(id) { $(id).classList.add('hidden'); }
+
+/* ---------- Aplikasi HP (PWA) ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+let DEF = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); DEF = e; $('btnInstall').classList.remove('hidden'); });
+window.addEventListener('appinstalled', () => $('btnInstall').classList.add('hidden'));
+async function pasang() { if (!DEF) return; DEF.prompt(); await DEF.userChoice; DEF = null; $('btnInstall').classList.add('hidden'); }
+if (/iphone|ipad/i.test(navigator.userAgent) && !window.navigator.standalone) $('iosHint').classList.remove('hidden');
 
 /* ---------- Init ---------- */
 (async function init() {
@@ -300,7 +321,7 @@ function noerr(id) { $(id).classList.add('hidden'); }
       if (u.indexOf('drive.google.com') > -1 && m) u = 'https://drive.google.com/thumbnail?id=' + m[0] + '&sz=w300';
       $('badge').innerHTML = '<img src="' + esc(u) + '" alt="logo">';
     }
-  } catch (e) { err('eSiswa', 'Tidak dapat terhubung ke server. Periksa API_URL dan koneksi internet.'); }
+  } catch (e) { err('eSiswa', (e.message && e.message.indexOf('Server') === 0) ? e.message : 'Tidak dapat terhubung ke server. Periksa API_URL dan koneksi internet.'); }
 })();
 
 function seg(t) {
