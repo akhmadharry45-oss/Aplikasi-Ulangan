@@ -80,6 +80,8 @@ button{cursor:pointer;border:none}
 .stim-text{line-height:1.7;font-size:16.5px;white-space:pre-wrap}
 .qtext{font-family:'Fraunces',serif;font-size:22px;line-height:1.45;margin-bottom:22px;white-space:pre-wrap;font-weight:500}
 .card img{max-width:100%;border-radius:10px;margin:8px 0}
+.qimg{cursor:zoom-in;display:block;background:#fff;border:1px solid var(--line)}
+.oimg{max-height:140px;margin:0}
 .opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;font-size:17px;color:var(--ink);transition:.12s}
 .opt:hover{border-color:var(--teal)}
 .opt .k{width:36px;height:36px;border-radius:10px;background:#f0e9db;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
@@ -150,12 +152,291 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
   .card{padding:20px}
 }
 </style>
+
+<style id="fx3d">
+/* ================= LAPISAN 3D ================= */
+:root{--ease:cubic-bezier(.2,.8,.2,1)}
+html,body{overflow-x:clip}
+body{background-image:
+  radial-gradient(900px 520px at 6% -6%,rgba(15,118,110,.10),transparent 60%),
+  radial-gradient(800px 520px at 100% 100%,rgba(233,168,32,.15),transparent 60%),
+  radial-gradient(#e6dccb 1px,transparent 1px);
+  background-size:auto,auto,22px 22px}
+
+/* --- latar melayang --- */
+.bg3d{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg3d i{position:absolute;display:block}
+.bg3d .s1{width:150px;height:150px;border-radius:50%;right:7%;top:16%;
+  background:radial-gradient(circle at 32% 28%,rgba(255,255,255,.95),rgba(255,255,255,0) 30%),radial-gradient(circle at 62% 62%,rgba(15,118,110,.30),rgba(15,118,110,.08));
+  box-shadow:inset -12px -16px 26px rgba(15,118,110,.20),0 30px 40px -20px rgba(15,118,110,.35);animation:bob 9s ease-in-out infinite}
+.bg3d .s2{width:230px;height:230px;border-radius:50%;left:-70px;bottom:8%;border:20px solid rgba(233,168,32,.20);
+  transform:perspective(600px) rotateX(68deg) rotateZ(0);animation:ringSpin 22s linear infinite}
+.bg3d .s3{width:70px;height:70px;border-radius:16px;left:9%;top:24%;
+  background:linear-gradient(135deg,rgba(194,65,12,.26),rgba(194,65,12,.07));box-shadow:0 18px 24px -12px rgba(194,65,12,.35),inset 0 0 0 2px rgba(255,255,255,.5);
+  animation:diamond 14s ease-in-out infinite}
+@keyframes ringSpin{to{transform:perspective(600px) rotateX(68deg) rotateZ(360deg)}}
+@keyframes diamond{0%,100%{transform:perspective(500px) rotateX(20deg) rotateY(0) rotateZ(10deg) translateY(0)}50%{transform:perspective(500px) rotateX(-20deg) rotateY(180deg) rotateZ(40deg) translateY(-18px)}}
+@keyframes bob{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-16px) translateX(6px)}}
+.login,.layout,.adm{position:relative;z-index:1}
+
+/* --- halaman masuk: kubus, cincin, bola --- */
+.l-left::after{background:radial-gradient(circle at 66% 68%,#f7c85a,#e9a820 42%,#9c6a08);
+  box-shadow:inset -16px -20px 34px rgba(90,50,0,.38),0 30px 40px rgba(0,0,0,.25);animation:bob 8s ease-in-out infinite}
+.l-left h1{text-shadow:0 1px 0 #0d6b63,0 2px 0 #0c625b,0 3px 0 #0b5a54,0 4px 0 #0a514c,0 12px 20px rgba(0,0,0,.35)}
+.badge{transform-style:preserve-3d;animation:badgeFloat 6s ease-in-out infinite;
+  box-shadow:0 2px 0 #fff inset,0 -4px 0 rgba(0,0,0,.08) inset,0 12px 0 -4px rgba(0,0,0,.16),0 24px 30px rgba(0,0,0,.30)}
+@keyframes badgeFloat{0%,100%{transform:perspective(600px) rotateY(-16deg) rotateX(6deg) translateY(0)}50%{transform:perspective(600px) rotateY(16deg) rotateX(-4deg) translateY(-8px)}}
+.orb{position:absolute;border-radius:50%;pointer-events:none;animation:bob var(--d,7s) ease-in-out infinite;animation-delay:var(--dl,0s)}
+.orb.o1{width:58px;height:58px;left:auto;right:12%;top:30%;--d:6s;
+  background:radial-gradient(circle at 32% 28%,#fff 0,rgba(255,255,255,0) 28%),radial-gradient(circle at 60% 60%,#ff9a62,#c2410c 70%,#7c2907);
+  box-shadow:inset -6px -9px 14px rgba(0,0,0,.30),0 18px 24px rgba(0,0,0,.25)}
+.orb.o2{width:34px;height:34px;left:10%;bottom:24%;--d:5s;--dl:-2s;
+  background:radial-gradient(circle at 32% 28%,#fff 0,rgba(255,255,255,0) 32%),radial-gradient(circle at 60% 60%,#e8fffb,#8fd5cc 75%);
+  box-shadow:inset -4px -6px 10px rgba(0,0,0,.22),0 14px 18px rgba(0,0,0,.22)}
+.orb.o3{width:22px;height:22px;left:56%;bottom:11%;--d:8s;--dl:-4s;
+  background:radial-gradient(circle at 32% 28%,#fff 0,rgba(255,255,255,0) 30%),radial-gradient(circle at 60% 60%,#f7c85a,#b9810c 80%);
+  box-shadow:inset -3px -4px 7px rgba(0,0,0,.25),0 10px 14px rgba(0,0,0,.22)}
+.scene{position:absolute;right:56px;bottom:92px;width:150px;height:150px;perspective:700px;pointer-events:none;z-index:1}
+.rig{position:absolute;inset:0;transform-style:preserve-3d;
+  transform:rotateX(calc(var(--my,0)*-14deg)) rotateY(calc(var(--mx,0)*18deg));transition:transform .25s ease-out}
+.cube{position:absolute;left:25px;top:25px;width:100px;height:100px;transform-style:preserve-3d;
+  transform:rotateX(-22deg) rotateY(-30deg);animation:spin 14s linear infinite}
+.face{position:absolute;width:100px;height:100px;display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',Georgia,serif;font-weight:700;font-size:46px;color:#fff;border-radius:14px;
+  background:linear-gradient(135deg,rgba(255,255,255,.40),rgba(255,255,255,.10));
+  border:2px solid rgba(255,255,255,.65);text-shadow:0 3px 0 rgba(0,0,0,.18);backface-visibility:hidden}
+.f1{transform:translateZ(50px)}
+.f2{transform:rotateY(90deg) translateZ(50px)}
+.f3{transform:rotateY(180deg) translateZ(50px)}
+.f4{transform:rotateY(-90deg) translateZ(50px)}
+.f5{transform:rotateX(90deg) translateZ(50px)}
+.f6{transform:rotateX(-90deg) translateZ(50px)}
+@keyframes spin{from{transform:rotateX(-22deg) rotateY(0)}to{transform:rotateX(-22deg) rotateY(360deg)}}
+.ring{position:absolute;border-radius:50%;left:50%;top:50%;border:3px solid rgba(255,255,255,.40);transform-style:preserve-3d}
+.ring.r1{width:150px;height:150px;margin:-75px 0 0 -75px;transform:rotateX(72deg);animation:ring1 9s linear infinite}
+.ring.r2{width:124px;height:124px;margin:-62px 0 0 -62px;border-color:rgba(233,168,32,.8);transform:rotateY(72deg);animation:ring2 12s linear infinite}
+@keyframes ring1{to{transform:rotateX(72deg) rotateZ(360deg)}}
+@keyframes ring2{to{transform:rotateY(72deg) rotateZ(-360deg)}}
+
+/* --- kartu masuk melayang --- */
+.l-right{padding-bottom:40px}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:26px;padding:28px 26px 8px;position:relative;
+  box-shadow:0 1px 0 #fff inset,0 3px 0 #e9dfcd,0 6px 0 #ded3be,0 34px 44px -20px rgba(31,42,46,.38);
+  transition:transform .2s ease-out}
+.seg{box-shadow:inset 0 3px 6px rgba(31,42,46,.13)}
+.seg button{transition:transform .15s var(--ease),box-shadow .15s,background .15s}
+.seg button.on{box-shadow:0 3px 0 #d8ccb5,0 9px 12px -4px rgba(31,42,46,.18);transform:translateY(-1px)}
+.box h2,.adm-top h1{text-shadow:0 1px 0 #fff,0 2px 0 #e4dccf,0 7px 10px rgba(31,42,46,.12)}
+.in{box-shadow:inset 0 3px 6px rgba(31,42,46,.07);transition:box-shadow .2s,border-color .2s,transform .2s var(--ease)}
+.in:focus{transform:translateY(-1px);box-shadow:inset 0 2px 4px rgba(31,42,46,.05),0 0 0 4px var(--teal-l),0 12px 18px -8px rgba(15,118,110,.45)}
+
+/* --- tombol bertekstur tombol keyboard --- */
+.btn,.a-ghost,.a-next,.a-ragu,.finish,.tb,.fab,.dlg .row button{--edge:var(--teal-d);
+  box-shadow:0 5px 0 var(--edge),0 13px 16px -5px rgba(31,42,46,.32);
+  transition:transform .12s var(--ease),box-shadow .12s var(--ease),background .15s}
+.btn,.a-next,.finish,.tb.pdf,.tb.xls{position:relative}
+.btn::after,.a-next::after,.finish::after,.tb.pdf::after,.tb.xls::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,0) 55%)}
+.btn,.a-next{--edge:#0a4f49}
+#btnInstall{--edge:#0f171a}
+.a-ghost{--edge:#d3c8b0}
+.a-ragu{--edge:#dcbc6d}
+.a-ragu.on{--edge:#a9740a}
+.finish,.fab{--edge:#0b1214}
+.tb{--edge:#d8ccb5}
+.tb.pdf{--edge:#8f2f06}
+.tb.xls{--edge:#0a4f49}
+.tb[style*="--red"]{--edge:#7f1313}
+.dlg .row button{--edge:rgba(0,0,0,.25)}
+@media(hover:hover){
+  .btn:hover:not(:disabled),.a-ghost:hover,.a-next:hover,.a-ragu:hover,.finish:hover,.tb:hover,.dlg .row button:hover{
+    transform:translateY(-2px);box-shadow:0 7px 0 var(--edge),0 18px 22px -6px rgba(31,42,46,.34)}
+}
+.btn:active:not(:disabled),.a-ghost:active,.a-next:active,.a-ragu:active,.finish:active,.tb:active,.fab:active,.dlg .row button:active{
+  transform:translateY(4px);box-shadow:0 1px 0 var(--edge),0 4px 8px -2px rgba(31,42,46,.3)}
+
+/* --- bilah atas, jam, progres --- */
+.bar{box-shadow:0 2px 0 #fff inset,0 10px 20px -12px rgba(31,42,46,.38)}
+.clock{background:linear-gradient(180deg,#eefaf7,var(--teal-l));
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.9),0 4px 0 #b5dbd5,0 11px 14px -6px rgba(15,118,110,.38)}
+.clock.warn{background:linear-gradient(180deg,#fff2e6,var(--clay-l));box-shadow:0 4px 0 #f0c3a0,0 11px 14px -6px rgba(194,65,12,.42)}
+.track{height:10px;box-shadow:inset 0 2px 4px rgba(31,42,46,.20)}
+.fill{background:linear-gradient(180deg,#2bb3a8,var(--teal) 55%,var(--teal-d));box-shadow:0 0 12px rgba(15,118,110,.5)}
+
+/* --- kartu soal bertumpuk seperti lembar kertas --- */
+.card{box-shadow:0 1px 0 #fff inset,0 3px 0 #ebe2d1,0 24px 34px -18px rgba(31,42,46,.32)}
+.stack{position:relative;margin-bottom:22px}
+.sheet{position:absolute;inset:0;border-radius:18px;background:#fbf8f1;border:1px solid var(--line);
+  box-shadow:0 10px 18px -10px rgba(31,42,46,.25);transform:translate(7px,9px) rotate(1.2deg)}
+.sheet.s2{background:#f4efe4;transform:translate(14px,18px) rotate(2.4deg)}
+.qcard{position:relative;z-index:1;transform-origin:50% 50%}
+.qcard.flip-next,.stim.flip-next{animation:flipNext .5s var(--ease);transform-origin:left center}
+.qcard.flip-prev,.stim.flip-prev{animation:flipPrev .5s var(--ease);transform-origin:right center}
+@keyframes flipNext{from{opacity:0;transform:perspective(1400px) rotateY(-28deg) translateX(40px) translateZ(-60px)}to{opacity:1;transform:perspective(1400px) none}}
+@keyframes flipPrev{from{opacity:0;transform:perspective(1400px) rotateY(28deg) translateX(-40px) translateZ(-60px)}to{opacity:1;transform:perspective(1400px) none}}
+
+/* --- pilihan jawaban --- */
+.opt{position:relative;box-shadow:0 4px 0 #e2d8c4,0 12px 16px -9px rgba(31,42,46,.28);
+  transition:transform .14s var(--ease),box-shadow .14s var(--ease),border-color .14s,background .14s}
+@media(hover:hover){.opt:hover{transform:translateY(-3px);box-shadow:0 7px 0 #d8ccb5,0 18px 22px -9px rgba(31,42,46,.30)}}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 #d8ccb5,0 3px 6px rgba(31,42,46,.2)}
+.opt .k{background:linear-gradient(180deg,#f8f2e5,#eadfc8);box-shadow:0 3px 0 #d2c6ac,inset 0 1px 0 #fff}
+.opt.sel{background:linear-gradient(180deg,#e9f7f4,var(--teal-l));transform:translateY(-2px);
+  box-shadow:0 5px 0 var(--teal-d),0 18px 26px -9px rgba(15,118,110,.50)}
+.opt.sel .k{background:linear-gradient(180deg,#14938a,var(--teal));box-shadow:0 3px 0 var(--teal-d),inset 0 1px 0 rgba(255,255,255,.35)}
+.opt.sel.pop{animation:popIn .45s var(--ease)}
+.opt.sel.pop .k{animation:keyTurn .55s var(--ease)}
+@keyframes popIn{0%{transform:translateY(0) scale(.97)}45%{transform:translateY(-9px) scale(1.025)}100%{transform:translateY(-2px) scale(1)}}
+@keyframes keyTurn{from{transform:perspective(300px) rotateY(0)}to{transform:perspective(300px) rotateY(360deg)}}
+#opts.enter .opt{animation:optIn .5s var(--ease) backwards}
+#opts.enter .opt:nth-child(1){animation-delay:.04s}
+#opts.enter .opt:nth-child(2){animation-delay:.10s}
+#opts.enter .opt:nth-child(3){animation-delay:.16s}
+#opts.enter .opt:nth-child(4){animation-delay:.22s}
+@keyframes optIn{from{opacity:0;transform:perspective(700px) translateY(20px) rotateX(-38deg)}to{opacity:1;transform:perspective(700px) none}}
+
+/* --- navigasi soal seperti tuts --- */
+.grid{gap:10px}
+.n{box-shadow:0 3px 0 #d5c9b0,0 8px 10px -4px rgba(31,42,46,.22);transition:transform .12s var(--ease),box-shadow .12s}
+.n:active{transform:translateY(3px);box-shadow:0 0 0 #d5c9b0}
+.n.done{background:linear-gradient(180deg,#14938a,var(--teal));box-shadow:0 3px 0 var(--teal-d),0 8px 10px -4px rgba(15,118,110,.5)}
+.n.ragu{background:linear-gradient(180deg,#f2bd3d,var(--sun));box-shadow:0 3px 0 #a9740a,0 8px 10px -4px rgba(169,116,10,.5)}
+.n.cur{transform:translateY(-3px) scale(1.08);outline:3px solid var(--ink);outline-offset:2px;box-shadow:0 7px 0 rgba(0,0,0,.25),0 16px 16px -4px rgba(31,42,46,.38)}
+
+/* --- dialog & hasil --- */
+.ov{animation:ovIn .25s ease}
+.dlg{animation:dlgIn .55s var(--ease);box-shadow:0 3px 0 #ebe2d1,0 6px 0 #e0d6c1,0 44px 64px -12px rgba(0,0,0,.55)}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+@keyframes dlgIn{from{opacity:0;transform:perspective(900px) rotateX(-40deg) translateY(40px) scale(.88)}to{opacity:1;transform:perspective(900px) none}}
+.coin{background:linear-gradient(145deg,#eefaf7,#bfe5df)!important;box-shadow:0 5px 0 #a3d3cc,0 16px 22px -6px rgba(15,118,110,.5);
+  animation:coin 1.1s var(--ease) .15s backwards}
+@keyframes coin{from{transform:perspective(600px) rotateY(-720deg) scale(.4);opacity:0}to{transform:perspective(600px) none;opacity:1}}
+
+/* --- panel guru --- */
+.stats{perspective:1000px}
+.stat{box-shadow:0 1px 0 #fff inset,0 4px 0 #e6dcc9,0 18px 24px -14px rgba(31,42,46,.32);transition:transform .18s ease-out,box-shadow .2s}
+.stat b{text-shadow:0 2px 0 #fff,0 5px 7px rgba(31,42,46,.16)}
+.tbl{box-shadow:0 4px 0 #e6dcc9,0 24px 32px -18px rgba(31,42,46,.32)}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#faf5ea}
+
+/* --- layar kecil --- */
+@media(max-width:860px){
+  .scene{right:6px;top:10px;bottom:auto;transform:scale(.52);transform-origin:top right}
+  .orb.o1{left:auto;right:7%;top:auto;bottom:12%;width:40px;height:40px}
+  .orb.o2{left:auto;right:27%;bottom:7%}
+  .orb.o3{display:none}
+  .l-right{padding:22px 16px 40px}
+  .box{padding:22px 18px 4px;border-radius:22px}
+  .sheet{transform:translate(5px,7px) rotate(1deg)}
+  .sheet.s2{transform:translate(9px,14px) rotate(2deg)}
+  .bg3d .s2{display:none}
+  .bg3d .s1{width:90px;height:90px}
+  .bg3d .s3{display:none}
+}
+
+/* --- hormati pengguna yang meminta animasi dikurangi --- */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+
+<style id="fx3d2">
+/* ================= 3D LEBIH HIDUP ================= */
+/* benda melayang tambahan + paralaks (digerakkan kursor / sensor gerak / sentuhan) */
+.bg3d i{translate:calc(var(--px,0)*var(--dp,0)*1px) calc(var(--py,0)*var(--dp,0)*1px)}
+.bg3d .s1{--dp:-26}.bg3d .s2{--dp:18}.bg3d .s3{--dp:-42}
+.bg3d .s4{width:64px;height:64px;right:15%;bottom:13%;--dp:34;transform-style:preserve-3d;animation:cubeBg 20s linear infinite}
+.bg3d .s4 b{position:absolute;inset:0;border-radius:10px;border:2px solid rgba(15,118,110,.40);
+  background:linear-gradient(135deg,rgba(15,118,110,.20),rgba(15,118,110,.04));backface-visibility:hidden}
+.bg3d .s4 b:nth-child(1){transform:translateZ(32px)}
+.bg3d .s4 b:nth-child(2){transform:rotateY(90deg) translateZ(32px)}
+.bg3d .s4 b:nth-child(3){transform:rotateY(180deg) translateZ(32px)}
+.bg3d .s4 b:nth-child(4){transform:rotateY(-90deg) translateZ(32px)}
+.bg3d .s4 b:nth-child(5){transform:rotateX(90deg) translateZ(32px)}
+.bg3d .s4 b:nth-child(6){transform:rotateX(-90deg) translateZ(32px)}
+@keyframes cubeBg{from{transform:perspective(700px) rotateX(-24deg) rotateY(0)}to{transform:perspective(700px) rotateX(-24deg) rotateY(360deg)}}
+.bg3d .s5{width:44px;height:44px;border-radius:50%;right:3.5%;top:58%;--dp:-30;
+  background:radial-gradient(circle at 32% 28%,#fff 0,rgba(255,255,255,0) 30%),radial-gradient(circle at 60% 60%,#f7c85a,#e9a820 55%,#b9810c);
+  box-shadow:inset -5px -7px 12px rgba(120,70,0,.30),0 18px 22px -8px rgba(185,129,12,.45);animation:bob 7s ease-in-out infinite -3s}
+.l-left .orb{translate:calc(var(--px,0)*-22px) calc(var(--py,0)*-22px)}
+.l-left .orb.o2{translate:calc(var(--px,0)*30px) calc(var(--py,0)*30px)}
+
+/* inti bercahaya di dalam kubus */
+.core{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#f7c85a 42%,#e9a820 72%);box-shadow:0 0 26px 8px rgba(247,200,90,.55);animation:corePulse 2.4s ease-in-out infinite}
+@keyframes corePulse{50%{transform:scale(1.18);box-shadow:0 0 34px 12px rgba(247,200,90,.7)}}
+.scene{cursor:grab}
+
+/* masuk ke layar: kartu naik dengan kedalaman */
+@keyframes riseIn{from{opacity:0;transform:perspective(1200px) translateY(46px) rotateX(-16deg) translateZ(-40px)}to{opacity:1;transform:perspective(1200px) none}}
+@keyframes dropIn{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:none}}
+#vExam:not(.hidden) .bar{animation:dropIn .6s var(--ease)}
+#vExam:not(.hidden) .stack{animation:riseIn .85s var(--ease) .08s backwards}
+#vExam:not(.hidden) .side{animation:riseIn .85s var(--ease) .22s backwards}
+#vAdmin:not(.hidden) .adm-top{animation:riseIn .7s var(--ease) backwards}
+#vAdmin:not(.hidden) .tools{animation:riseIn .7s var(--ease) .1s backwards}
+#vAdmin:not(.hidden) .tbl{animation:riseIn .8s var(--ease) .18s backwards}
+#vLogin .box{animation:riseIn .9s var(--ease) .1s backwards}
+
+/* denyut cincin pada tombol utama halaman masuk */
+#btnMasuk::before,#btnGuru::before{content:'';position:absolute;inset:0;border-radius:12px;pointer-events:none;
+  border:2px solid rgba(15,118,110,.55);opacity:0;animation:ping 2.8s ease-out 1s infinite}
+@keyframes ping{0%{opacity:.8;transform:scale(1,1)}70%,100%{opacity:0;transform:scale(1.05,1.55)}}
+
+/* progres berkilau */
+.fill{position:relative;overflow:hidden}
+.fill::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);
+  transform:translateX(-120%);animation:shine 2.6s ease-in-out infinite}
+@keyframes shine{60%,100%{transform:translateX(120%)}}
+
+/* jam: angka berputar seperti papan */
+#timer{display:inline-flex}
+#timer .d{display:inline-block;font-weight:inherit;transform-origin:50% 100%}
+#timer .d.f{animation:digit .45s var(--ease)}
+@keyframes digit{from{opacity:.2;transform:perspective(220px) rotateX(-85deg) translateY(-4px)}to{opacity:1;transform:perspective(220px) none}}
+
+/* tombol nomor aktif memantul */
+.n.cur{animation:curPop .38s var(--ease)}
+@keyframes curPop{0%{transform:translateY(0) scale(.9)}55%{transform:translateY(-8px) scale(1.16)}100%{transform:translateY(-3px) scale(1.08)}}
+
+/* percikan & konfeti 3D */
+#fx{position:fixed;inset:0;z-index:80;pointer-events:none;overflow:hidden;perspective:900px}
+.spk{position:absolute;left:var(--x);top:var(--y);width:9px;height:9px;margin:-4px;border-radius:2px;background:var(--c);
+  animation:spk .72s cubic-bezier(.1,.7,.3,1) forwards}
+@keyframes spk{from{transform:translate3d(0,0,0) rotateX(0) rotateY(0) scale(1);opacity:1}
+  to{transform:translate3d(var(--dx),var(--dy),var(--dz)) rotateX(var(--rx)) rotateY(var(--ry)) scale(.25);opacity:0}}
+.cf{position:absolute;top:-30px;left:var(--x);width:var(--w);height:var(--h);background:var(--c);border-radius:2px;
+  animation:cf var(--t) cubic-bezier(.3,.45,.5,1) var(--dl) forwards}
+@keyframes cf{from{transform:translate3d(0,0,0) rotateX(0) rotateY(0) rotateZ(0)}
+  to{transform:translate3d(var(--dx),calc(100vh + 80px),var(--dz)) rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz))}}
+
+/* tabel guru: baris terangkat */
+@media(hover:hover){tbody tr:hover td{box-shadow:inset 0 -2px 0 rgba(15,118,110,.18)}}
+
+@media(max-width:860px){
+  .acts{flex-wrap:nowrap;gap:8px}
+  .acts button{padding:13px 10px;font-size:14px;white-space:nowrap}
+  .a-ragu{min-width:0}
+  .bg3d .s4{width:44px;height:44px;right:8%;bottom:9%}
+  .bg3d .s4 b:nth-child(1){transform:translateZ(22px)}.bg3d .s4 b:nth-child(2){transform:rotateY(90deg) translateZ(22px)}
+  .bg3d .s4 b:nth-child(3){transform:rotateY(180deg) translateZ(22px)}.bg3d .s4 b:nth-child(4){transform:rotateY(-90deg) translateZ(22px)}
+  .bg3d .s4 b:nth-child(5){transform:rotateX(90deg) translateZ(22px)}.bg3d .s4 b:nth-child(6){transform:rotateX(-90deg) translateZ(22px)}
+  .bg3d .s5{width:30px;height:30px;right:5%;top:64%}
+}
+</style>
 </head>
 <body>
+<div class="bg3d" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"><b></b><b></b><b></b><b></b><b></b><b></b></i><i class="s5"></i></div>
 
 <!-- ================= LOGIN ================= -->
 <div id="vLogin" class="login">
   <div class="l-left">
+    <i class="orb o1"></i><i class="orb o2"></i><i class="orb o3"></i>
+    <div class="scene" aria-hidden="true"><div class="rig">
+      <div class="ring r1"></div><div class="ring r2"></div>
+      <div class="cube"><div class="face f1">A</div><div class="face f2">B</div><div class="face f3">C</div><div class="face f4">D</div><div class="face f5">✓</div><div class="face f6">?</div><i class="core"></i></div>
+    </div></div>
     <div>
       <div class="badge" id="badge">
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="M6 10.5V16c0 1.5 2.7 3 6 3s6-1.5 6-3v-5.5"/></svg>
@@ -167,7 +448,7 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
   </div>
 
   <div class="l-right">
-    <div class="box">
+    <div class="box" data-tilt="0.55">
       <div class="seg">
         <button class="on" id="sgSiswa" onclick="seg('siswa')">Siswa</button>
         <button id="sgGuru" onclick="seg('guru')">Guru</button>
@@ -214,7 +495,8 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
   <div class="layout">
     <div>
       <div class="card stim hidden" id="stimBox"></div>
-      <div class="card">
+      <div class="stack"><i class="sheet"></i><i class="sheet s2"></i>
+      <div class="card qcard" id="qCard" data-tilt="0.22">
         <div class="eyebrow" id="qMeta"></div>
         <div class="qtext" id="qText"></div>
         <div id="opts"></div>
@@ -224,9 +506,10 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
           <button class="a-next" onclick="gerak(1)">Lanjut →</button>
         </div>
       </div>
+      </div>
     </div>
 
-    <div class="card side" id="nav">
+    <div class="card side" id="nav" data-tilt="0.2">
       <h3>Navigasi soal</h3>
       <div class="grid" id="grid"></div>
       <div class="legend">
@@ -290,12 +573,18 @@ td.nl{font-weight:700;font-family:'Fraunces',serif;font-size:17px;color:var(--te
 
 <script>
 /* ====== WAJIB DIISI: tempel URL Web App dari Google Apps Script (berakhiran /exec) ====== */
-const API_URL = 'https://script.google.com/macros/s/AKfycby6YPeXcHFReh4M8gVgj8IGag0HdbakAzFEfHhM3jiQbXitHypaIShGe2NRcGAPFoveXA/exec';
+const API_URL = 'PASTE_URL_WEB_APP_DI_SINI';
 /* ======================================================================================= */
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const rich = s => esc(s).replace(/\[img:(https?:\/\/[^\]\s]+)\]/g, (_, u) => '<img src="' + u.replace(/&amp;/g, '&') + '" alt="">');
+const driveFix = u => { const m = u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&(?:amp;)?)?id=)([-\w]{20,})/); return m ? 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1000' : u; };
+const rich = (s, zoom = true) => esc(s).replace(/\[img:(https?:\/\/[^\]\s]+)\]/g, (_, u) =>
+  '<img class="' + (zoom ? 'qimg' : 'oimg') + '" src="' + driveFix(u.replace(/&amp;/g, '&')) + '" alt="gambar soal" loading="lazy"' +
+  (zoom ? ' onclick="zoomImg(this)"' : '') + ' onerror="this.outerHTML=\'<i style=color:#b91c1c>[gambar tidak dapat dimuat]</i>\'">');
+function zoomImg(el) {
+  $('modal').innerHTML = '<div class="ov" style="cursor:zoom-out" onclick="$(\'modal\').innerHTML=\'\'"><img src="' + el.src + '" alt="" style="max-width:100%;max-height:92vh;background:#fff;border-radius:12px;padding:8px"></div>';
+}
 
 let MAPEL = '', CFG = {}, SOAL = [], JAWAB = {}, RAGU = {}, CUR = 0, TOKEN = '', NAMA = '';
 let END = 0, TIMER = null, PEL = 0, DONE = false, ADMINPW = '', HASIL = [];
@@ -389,7 +678,12 @@ const simpan = () => { try { localStorage.setItem('ujian_' + TOKEN, JSON.stringi
 function tick() {
   const s = Math.max(0, Math.round((END - Date.now()) / 1000));
   const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), d = s % 60;
-  $('timer').textContent = [h, m, d].map(x => ('0' + x).slice(-2)).join(':');
+  const txt = [h, m, d].map(x => ('0' + x).slice(-2)).join(':');
+  if (txt !== window._tx) {   // angka yang berubah berputar seperti papan jam
+    const old = window._tx || '';
+    $('timer').innerHTML = txt.split('').map((c, i) => '<b class="d' + (old && old[i] !== c ? ' f' : '') + '">' + c + '</b>').join('');
+    window._tx = txt;
+  }
   $('clock').classList.toggle('warn', s <= 300);
   if (s <= 0 && !DONE) kirim();
 }
@@ -413,7 +707,7 @@ function render() {
   $('qText').innerHTML = rich(q.soal);
   const L = ['A', 'B', 'C', 'D'];
   $('opts').innerHTML = q.opsi.map((o, i) => o === '' ? '' :
-    '<button class="opt' + (JAWAB[q.no] === L[i] ? ' sel' : '') + '" onclick="pilih(\'' + L[i] + '\')"><span class="k">' + L[i] + '</span><span>' + rich(o) + '</span></button>').join('');
+    '<button class="opt' + (JAWAB[q.no] === L[i] ? ' sel' : '') + '" onclick="pilih(\'' + L[i] + '\')"><span class="k">' + L[i] + '</span><span>' + rich(o, false) + '</span></button>').join('');
   $('bRagu').classList.toggle('on', !!RAGU[q.no]);
   $('grid').innerHTML = SOAL.map((s, k) => {
     let c = 'n'; if (RAGU[s.no]) c += ' ragu'; else if (JAWAB[s.no]) c += ' done'; if (k === CUR) c += ' cur';
@@ -423,14 +717,29 @@ function render() {
   $('pTxt').textContent = done + ' dari ' + SOAL.length + ' soal terjawab';
   $('pFill').style.width = (done / SOAL.length * 100) + '%';
 }
-function pilih(o) { JAWAB[SOAL[CUR].no] = o; simpan(); render(); }
+function pilih(o) {
+  JAWAB[SOAL[CUR].no] = o; simpan(); render();
+  const el = document.querySelector('.opt.sel'); if (el) { el.classList.add('pop'); if (window.burst3d) burst3d(el.querySelector('.k') || el); }
+  try { if (navigator.vibrate) navigator.vibrate(12); } catch (e) {}
+}
 function toggleRagu() { const n = SOAL[CUR].no; RAGU[n] = !RAGU[n]; simpan(); render(); }
-function ke(i) { CUR = i; simpan(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function animSoal(dir) {
+  const c = $('qCard'), st = $('stimBox'), o = $('opts');
+  if (!c) return;
+  [c, st].forEach(el => el.classList.remove('flip-next', 'flip-prev'));
+  void c.offsetWidth;
+  const cls = dir >= 0 ? 'flip-next' : 'flip-prev';
+  c.classList.add(cls);
+  if (!st.classList.contains('hidden')) st.classList.add(cls);
+  o.classList.add('enter'); clearTimeout(window._enT);
+  window._enT = setTimeout(() => o.classList.remove('enter'), 800);
+}
+function ke(i) { const dir = i >= CUR ? 1 : -1; CUR = i; simpan(); render(); animSoal(dir); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 function gerak(d) { const i = CUR + d; if (i >= 0 && i < SOAL.length) ke(i); }
 
 /* ---------- Dialog & kirim ---------- */
 function dialog(html, acts) {
-  $('modal').innerHTML = '<div class="ov"><div class="dlg">' + html + '<div class="row">' +
+  $('modal').innerHTML = '<div class="ov"><div class="dlg" data-tilt="0.6">' + html + '<div class="row">' +
     acts.map((a, i) => '<button style="' + a.c + '" onclick="dlgAct(' + i + ')">' + a.t + '</button>').join('') + '</div></div></div>';
   window._acts = acts;
 }
@@ -451,12 +760,13 @@ async function kirim() {
     const r = await api('submit', { token: TOKEN, jawaban: JAWAB, pelanggaran: PEL });
     if (!r.ok) throw new Error(r.msg);
     try { localStorage.removeItem('ujian_' + TOKEN); } catch (e) {}
-    $('modal').innerHTML = '<div class="ov"><div class="dlg res">' +
-      '<div style="width:76px;height:76px;border-radius:50%;background:var(--teal-l);color:var(--teal);font-size:42px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">✓</div>' +
+    $('modal').innerHTML = '<div class="ov"><div class="dlg res" data-tilt="0.6">' +
+      '<div class="coin" style="width:76px;height:76px;border-radius:50%;background:var(--teal-l);color:var(--teal);font-size:42px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">✓</div>' +
       '<h3 class="serif" style="font-size:28px;margin-bottom:10px">Ujian selesai</h3>' +
       '<p>Jawaban kamu sudah terkirim.<br>Terima kasih, ' + esc(NAMA) + '.</p>' +
       '<p style="color:var(--muted);font-size:14px;margin-top:10px">' + esc(MAPEL) + '<br>Hasil akan diumumkan oleh guru.</p>' +
       '<div class="row"><button style="background:var(--teal);color:#fff" onclick="location.reload()">Selesai &amp; keluar</button></div></div></div>';
+    if (window.confetti3d) confetti3d();
   } catch (e) {
     DONE = false; TIMER = setInterval(tick, 500);
     dialog('<p>Gagal mengirim jawaban. Periksa koneksi internet lalu coba lagi.</p>', [{ t: 'Coba lagi', c: 'background:var(--teal);color:#fff', f: kirim }]);
@@ -509,7 +819,7 @@ function tabel() {
   const rows = terfilter(), s = ringkas(rows), m = $('aMapel').value;
   $('aSub').textContent = (CFG.judul || '') + ' · ' + (CFG.kelas || '') + (m ? ' · ' + m : '');
   $('aStats').innerHTML = [['Selesai', s.jml], ['Mengerjakan', window._mengerjakan || 0], ['Rata-rata', s.avg], ['Tertinggi', s.max], ['Terendah', s.min]]
-    .map(a => '<div class="stat"><small>' + a[0] + '</small><b>' + a[1] + '</b></div>').join('');
+    .map(a => '<div class="stat" data-tilt="0.8"><small>' + a[0] + '</small><b>' + a[1] + '</b></div>').join('');
   $('aBody').innerHTML = rows.map((x, i) =>
     '<tr><td>' + (i + 1) + '</td><td>' + esc(x.nama) + '</td><td>' + esc(x.mapel) + '</td><td>' + esc(x.token) + '</td><td>' + x.benar + '</td><td>' + x.salah +
     '</td><td class="nl">' + x.nilai + '</td><td>' + x.pel + '</td><td>' + esc(x.waktu) + '</td></tr>').join('') ||
@@ -582,6 +892,155 @@ function expCSV() {
   a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
   a.download = namaFile('csv'); a.click();
 }
+</script>
+
+<script>
+/* Efek 3D mengikuti kursor: hanya di komputer dengan mouse, mati jika pengguna meminta animasi dikurangi. */
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  const left = document.querySelector('.l-left');
+  let raf = 0, last = null;
+  const reset = el => { if (el) el.style.transform = ''; };
+  document.addEventListener('pointermove', e => {
+    if (raf) return;
+    raf = requestAnimationFrame(() => {
+      raf = 0;
+      if (left) {
+        const r = left.getBoundingClientRect();
+        if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+          left.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 2 - 1).toFixed(3));
+          left.style.setProperty('--my', ((e.clientY - r.top) / r.height * 2 - 1).toFixed(3));
+        }
+      }
+      const t = e.target && e.target.closest ? e.target.closest('[data-tilt]') : null;
+      if (last && last !== t) { reset(last); last = null; }
+      if (!t) return;
+      if (t.matches(':focus-within')) { reset(t); last = null; return; }
+      const r = t.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5, py = (e.clientY - r.top) / r.height - 0.5;
+      const k = parseFloat(t.getAttribute('data-tilt')) || 1;
+      t.style.transform = 'perspective(900px) rotateX(' + (-py * 7 * k).toFixed(2) + 'deg) rotateY(' + (px * 9 * k).toFixed(2) + 'deg)';
+      last = t;
+    });
+  }, { passive: true });
+  document.documentElement.addEventListener('mouseleave', () => { reset(last); last = null; });
+  if (left) left.addEventListener('mouseleave', () => { left.style.setProperty('--mx', 0); left.style.setProperty('--my', 0); });
+})();
+</script>
+
+<script id="fx3d2js">
+/* Gerak 3D: kursor (komputer), sensor gerak atau sentuhan (HP). Mati jika pengguna meminta animasi dikurangi. */
+(function () {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const bg = document.querySelector('.bg3d'), left = document.querySelector('.l-left');
+  const clamp = v => Math.max(-1, Math.min(1, v));
+
+  /* ---- percikan & konfeti ---- */
+  const COL = ['#0f766e', '#14938a', '#e9a820', '#c2410c', '#f7c85a', '#2bb3a8'];
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function layer() { let f = document.getElementById('fx'); if (!f) { f = document.createElement('div'); f.id = 'fx'; document.body.appendChild(f); } return f; }
+  window.burst3d = function (el) {
+    if (reduce || !el) return;
+    const r = el.getBoundingClientRect(), f = layer(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    for (let i = 0; i < 12; i++) {
+      const a = i / 12 * Math.PI * 2 + rnd(-.3, .3), d = rnd(34, 78), p = document.createElement('i');
+      p.className = 'spk';
+      p.style.cssText = '--x:' + cx + 'px;--y:' + cy + 'px;--c:' + COL[i % COL.length] +
+        ';--dx:' + (Math.cos(a) * d).toFixed(0) + 'px;--dy:' + (Math.sin(a) * d - 10).toFixed(0) + 'px;--dz:' + rnd(-80, 120).toFixed(0) +
+        'px;--rx:' + rnd(-540, 540).toFixed(0) + 'deg;--ry:' + rnd(-540, 540).toFixed(0) + 'deg';
+      f.appendChild(p); setTimeout(() => p.remove(), 800);
+    }
+  };
+  window.confetti3d = function () {
+    if (reduce) return;
+    const f = layer(), W = innerWidth, n = W < 600 ? 46 : 80;
+    for (let i = 0; i < n; i++) {
+      const p = document.createElement('i'); p.className = 'cf';
+      p.style.cssText = '--x:' + rnd(0, W).toFixed(0) + 'px;--c:' + COL[i % COL.length] + ';--w:' + rnd(7, 12).toFixed(0) + 'px;--h:' + rnd(12, 20).toFixed(0) +
+        'px;--t:' + rnd(2.4, 4.2).toFixed(2) + 's;--dl:' + rnd(0, .9).toFixed(2) + 's;--dx:' + rnd(-120, 120).toFixed(0) + 'px;--dz:' + rnd(-200, 260).toFixed(0) +
+        'px;--rx:' + rnd(360, 1080).toFixed(0) + 'deg;--ry:' + rnd(360, 1080).toFixed(0) + 'deg;--rz:' + rnd(-360, 360).toFixed(0) + 'deg';
+      f.appendChild(p);
+    }
+    setTimeout(() => { f.innerHTML = ''; }, 5600);
+  };
+  if (reduce) return;
+
+  /* ---- masukan gerak -> variabel --px/--py (hanya di elemen yang memakainya) ---- */
+  let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+  function apply() {
+    const x = cx.toFixed(3), y = cy.toFixed(3);
+    if (bg) { bg.style.setProperty('--px', x); bg.style.setProperty('--py', y); }
+    if (left) { left.style.setProperty('--px', x); left.style.setProperty('--py', y); }
+    if (!fine) {                       // di HP: miringkan kartu & sambungkan kubus (di komputer sudah ditangani skrip kursor)
+      if (left) { left.style.setProperty('--mx', x); left.style.setProperty('--my', y); }
+      document.querySelectorAll('[data-tilt]').forEach(el => {
+        if (el.matches(':focus-within')) { el.style.transform = ''; return; }
+        const k = parseFloat(el.getAttribute('data-tilt')) || 1;
+        el.style.transform = 'perspective(900px) rotateX(' + (-cy * 6 * k).toFixed(2) + 'deg) rotateY(' + (cx * 8 * k).toFixed(2) + 'deg)';
+      });
+    }
+  }
+  function loop() {
+    cx += (tx - cx) * .12; cy += (ty - cy) * .12; apply();
+    raf = (Math.abs(tx - cx) > .003 || Math.abs(ty - cy) > .003) ? requestAnimationFrame(loop) : 0;
+  }
+  const aim = (x, y) => { tx = clamp(x); ty = clamp(y); if (!raf) raf = requestAnimationFrame(loop); };
+
+  if (fine) {
+    document.addEventListener('pointermove', e => aim(e.clientX / innerWidth * 2 - 1, e.clientY / innerHeight * 2 - 1), { passive: true });
+  } else {
+    let gyro = false, b0 = null, g0 = null;
+    const onOri = e => {
+      if (e.gamma == null || e.beta == null) return;
+      gyro = true;
+      if (b0 === null) { b0 = e.beta; g0 = e.gamma; }
+      b0 += (e.beta - b0) * .004; g0 += (e.gamma - g0) * .004;      // titik netral menyesuaikan pelan-pelan
+      const a = (screen.orientation && screen.orientation.angle) || 0;
+      let dx = e.gamma - g0, dy = e.beta - b0;
+      if (a === 90) { const t = dx; dx = dy; dy = -t; } else if (a === 270) { const t = dx; dx = -dy; dy = t; }
+      aim(dx / 22, dy / 22);
+    };
+    const ask = () => {                                              // iPhone meminta izin sensor setelah sentuhan pertama
+      try {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission().then(r => { if (r === 'granted') window.addEventListener('deviceorientation', onOri, true); }).catch(() => {});
+        }
+      } catch (e) {}
+    };
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      document.addEventListener('pointerup', ask, { once: true });
+    } else { window.addEventListener('deviceorientation', onOri, true); }
+    // cadangan bila tidak ada sensor: jari yang bergeser menggerakkan latar
+    const touch = e => { if (gyro || !e.touches[0]) return; aim((e.touches[0].clientX / innerWidth * 2 - 1) * .8, (e.touches[0].clientY / innerHeight * 2 - 1) * .8); };
+    document.addEventListener('touchstart', touch, { passive: true });
+    document.addEventListener('touchmove', touch, { passive: true });
+    document.addEventListener('touchend', () => { if (!gyro) aim(0, 0); }, { passive: true });
+  }
+
+  /* ---- kubus di halaman masuk: seret untuk memutar ---- */
+  const cube = document.querySelector('.cube'), scene = document.querySelector('.scene'), vLogin = document.getElementById('vLogin');
+  if (cube && scene) {
+    cube.style.animation = 'none';
+    scene.style.pointerEvents = 'auto'; scene.style.touchAction = 'none';
+    let ry = -30, rx = -22, vy = .45, vx = 0, drag = false, lx = 0, ly = 0;
+    scene.addEventListener('pointerdown', e => { drag = true; lx = e.clientX; ly = e.clientY; try { scene.setPointerCapture(e.pointerId); } catch (x) {} scene.style.cursor = 'grabbing'; });
+    scene.addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY;
+      ry += dx * .7; rx -= dy * .7; vy = dx * .7; vx = -dy * .7;
+    });
+    const up = () => { drag = false; scene.style.cursor = 'grab'; };
+    scene.addEventListener('pointerup', up); scene.addEventListener('pointercancel', up);
+    (function frame() {
+      if (vLogin && vLogin.classList.contains('hidden')) return;      // berhenti saat ujian dimulai
+      if (!drag) { ry += vy; rx += vx; vy += (.45 - vy) * .03; vx += -vx * .05; rx += (-22 - rx) * .02; }
+      cube.style.transform = 'rotateX(' + rx.toFixed(1) + 'deg) rotateY(' + ry.toFixed(1) + 'deg)';
+      requestAnimationFrame(frame);
+    })();
+  }
+})();
 </script>
 </body>
 </html>
